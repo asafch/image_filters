@@ -12,32 +12,99 @@
 GLuint texture[4];
 GLuint bitTex;
 GLubyte *pic;
+
 GLint width;
 GLint height;
 GLubyte *data_out;
+GLubyte *floyd_out;     //initialize an output image for the Floyd algorithm
+GLubyte *halfTone_out;  //initialize an output image for the Halftone algorithm
+GLubyte *sobel_out;     //initialize an output image for the Edge Detection algorithm
 
+//Floyd Steinberg Dither Algorithm
+void floydSteinberg(){
+    floyd_out = new GLubyte[width*height]();
+    int x, y, quant_error;
+    for (y = 0; y < height; y++) {
+        for (x = 0; x < width; x++) {
+            char oldPixel = data_out[(y*width)+x];
+            char newPixel = (oldPixel / 16)*16;
+            floyd_out[(y*width)+x] = newPixel;
+            quant_error = oldPixel - newPixel;
+            floyd_out[(y*width)+x+1] = data_out[(y*width)+x+1] + quant_error * (7/16);
+            floyd_out[y*(width+1) + (x+1)] = data_out[y*(width+1) + (x+1)] + quant_error * (3/16);
+            floyd_out[y*(width+1) + x] = data_out[y*(width+1) + x] + quant_error * (5/16);
+            floyd_out[y*(width+1)+(x-1)] = data_out[y*(width+1)+(x-1)] + quant_error * (1/16);
+        }
+    }
+}
 
-//char* filename;
+////HalfTone Algorithm
+//void halfTone(){
+//    halfTone_out = new GLubyte[width*height];
+//    int x, y;
+//    for (x = 0; x < width; x++) {
+//        for (y = 0; y < height; y++) {
+//            GLubyte currPixel = pic[(y*width)+x];
+//            
+//
+//        }
+//    }
+//}
 
-/*void floydSteinberg(GLuint texture){
- GLdouble fls_a = 7/16;
- GLdouble fls_b = 1/16;
- GLdouble fls_g = 5/16;
- GLdouble fls_d = 3/16;
- int x;
- int y;
- gl_pixel
- for (x = 0; x < width; x++) {
- for (y = 0; y < height; y++) {
- P(x,y) = trunc(I(x,y) + 0.5)
- e = I(x,y) - P(x,y)
- I(x,y+1) += fls_a*e;
- I(x+1,y-1) += fls_b*e;
- I(x+1,y) += fls_g*e;
- I(x+1,y+1) += fls_d*e;
- 
- }*/
-
+//EdgeDetection algorithm
+void edgeDetect(){
+    sobel_out = new GLubyte[width*height];
+    int sumX, sumY;
+    int newPixel;
+    int i, j;
+    int Sx [3][3];
+    int Sy [3][3];
+    int col = 0;
+    int row = 0;
+    
+    // Sobel Mask, Sx
+    Sx[0][0]=-1;    Sx[0][1]=0;     Sx[0][2]=1;
+    Sx[1][0]=-2;    Sx[1][1]=0;     Sx[1][2]=2;
+    Sx[2][0]=-1;    Sx[2][1]=0;     Sx[2][2]=1;
+    
+    // Sobel Mask, Sy
+    Sy[0][0]=1;     Sy[0][1]=2;     Sy[0][2]=1;
+    Sy[1][0]=0;     Sy[1][1]=0;     Sy[1][2]=0;
+    Sy[2][0]=-1;    Sy[2][1]=-2;    Sy[2][2]=-1;
+    
+    for (col = 0; col < width; col++) {
+        for (row = 0; row < height; row++) {
+            sumX = 0;
+            sumY = 0;
+            
+            if (height==0)
+                newPixel=0;
+            else if (width==0)
+                newPixel=0;
+            else {
+                // Gradient X
+                for(i=-1; i<=1; i++) {
+                    for(j=-1; j<=1; j++) {
+                        sumX += data_out[(row+i)*width + (col+j)]*Sx[i+1][j+1];
+                    }
+                }
+                // Gradient Y
+                for(i=-1; i<=1; i++) {
+                    for(j=-1; j<=1; j++) {
+                        sumY += data_out[(row+i)*width + (col+j)]*Sy[i+1][j+1];
+                    }
+                }
+                
+                newPixel = sqrt(pow((double)(sumX/8), 2.0) + pow((double)(sumY/8), 2.0));
+                
+                if (newPixel>25)
+                    sobel_out[(row*width + col)]=25;
+                else if (newPixel<0)
+                    sobel_out[(row*width + col)]=0;
+            }
+        }
+    }
+}
 
 void init()
 {
@@ -51,8 +118,8 @@ void init()
     glClearColor(0,0,0,0);
     
     //f=fopen(filename,"rb");
-    f=fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
-    
+    //f=fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
+    f=fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
     //image header reading
     fread(header,54,1,f);
     if(header[0]!='B' || header[1]!='M')
@@ -67,8 +134,9 @@ void init()
     
     /**********************************/
     
-    pic=new GLubyte[width*height];
-    data_out=new GLubyte[width*height];
+    pic = new GLubyte[width*height];
+    data_out = new GLubyte[width*height];
+    
     printf("***** color table *******\n");
     rd=fread(colorTable,1,1024,f); //read color table
     for(int i=0;i<256*4;i++)
@@ -81,41 +149,44 @@ void init()
     printf("***** %zu *******\n",rd);
     
     fclose(f);
-    
+    std::cout<< "The Value of this pixel is: "<< pic[0]<<"\n";
     //scale image to 512X512 pixels image
-    gluScaleImage(GL_RGB , width, height,GL_UNSIGNED_BYTE, pic, 256*3, 256*3,GL_UNSIGNED_BYTE, data_out);
-    //**************************************
-    printf("texture\n");
+    gluScaleImage(GL_RGB , width, height,GL_UNSIGNED_BYTE, pic, 256, 256,GL_UNSIGNED_BYTE, data_out);
     
+    //----------------initialize Filters------------------//
+    floydSteinberg();
+    //halfTone();
+    edgeDetect();
     
+    //****************Set Textures***********************//
+
     glGenTextures(4, texture);
     
+    //bottom left
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, halfTone_out);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, pic);
-    
+    //bottom right
     glBindTexture(GL_TEXTURE_2D, texture[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, floyd_out);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, pic);
-    
-    
+    //top right
     glBindTexture(GL_TEXTURE_2D, texture[2]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, sobel_out);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, pic);
-    
-    
+    //top left
     glBindTexture(GL_TEXTURE_2D, texture[3]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
