@@ -29,6 +29,7 @@
 		59D609EC1BEF5D9600D5A5B8 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		59D609EE1BEF5D9D00D5A5B8 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		59D609F01BEF5DA300D5A5B8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		59D609F21BEF5E8700D5A5B8 /* lena256.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = lena256.bmp; sourceTree = "<group>"; };
 		F025497C1BEF5D2100A76600 /* CG_ex1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CG_ex1; sourceTree = BUILT_PRODUCTS_DIR; };
 		F025497F1BEF5D2100A76600 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				F025497F1BEF5D2100A76600 /* main.cpp */,
+				59D609F21BEF5E8700D5A5B8 /* lena256.bmp */,
 			);
 			path = CG_ex1;
 			sourceTree = "<group>";
@@ -220,6 +222,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -228,6 +231,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
