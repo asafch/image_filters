@@ -10,7 +10,6 @@
 #include <GLUT/GLUT.h>
 
 GLuint texture[4];
-GLuint bitTex;          // not in use!
 GLubyte *pic;
 GLint width;
 GLint height;
@@ -20,10 +19,10 @@ GLubyte *halfTone_out;          //initialize an output image for the Halftone al
 GLubyte *halfTone_out_scaled;   //initialize an output image for the Scaled down Halftone image
 GLubyte *sobel_out;             //initialize an output image for the Edge Detection algorithm
 
-
-//Floyd Steinberg Dither Algorithm
-void floydSteinberg(){
-    floyd_out = new GLubyte[width*height];
+//Floyd-Steinberg dithering algorithm
+void floydSteinberg()
+{
+    floyd_out = new GLubyte[width * height];
     int x, y, quant_error;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
@@ -152,18 +151,14 @@ void edgeDetect()
                     for (j = -1; j <= 1; j++)
                         sumX += data_out[(row + i) * width + (col + j)] * Sx[i + 1][j + 1];
                 // Gradient Y
-                for(i=-1; i<=1; i++) {
-                    for(j=-1; j<=1; j++) {
-                        sumY += data_out[(row+i)*width + (col+j)]*Sy[i+1][j+1];
-                    }
-                }
-                
-                newPixel = sqrt(pow((double)(sumX/8), 2.0) + pow((double)(sumY/8), 2.0));
-                
-                if (newPixel>25)
-                    sobel_out[(row*width + col)]=255;
-                else if (newPixel<0)
-                    sobel_out[(row*width + col)]=0;
+                for (i = -1; i <= 1; i++)
+                    for (j = -1; j <= 1; j++)
+                        sumY += data_out[(row + i) * width + (col + j)] * Sy[i + 1][j + 1];
+                newPixel = sqrt(pow((double)(sumX / 8), 2.0) + pow((double)(sumY / 8), 2.0));
+                if (newPixel > 25)
+                    sobel_out[(row * width + col)] = 255;
+                else if (newPixel < 0)
+                    sobel_out[(row * width + col)] = 0;
             }
         }
     }
@@ -208,7 +203,6 @@ void init()
             printf("%x  ", colorTable[i]);
     printf("\n");
     rd = fread(pic, 1, width * height, f); //read image
-    printf("***** %zu *******\n", rd);    //what's this?
     fclose(f);
     
     //scale image to 512X512 pixels image
@@ -259,11 +253,9 @@ void init()
 void lenasWindow(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
-//    glBindTexture(GL_TEXTURE_2D, texture[1]); //using Lena texture
-//    glViewport(0,0,256*2,256*2);
-    //bottom left - half tone
-    glViewport(0, 0, 256, 256);
+    
+    //bottom left
+    glViewport(0,0,256,256);
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0f, 1.0);
@@ -271,6 +263,7 @@ void lenasWindow(void)
     glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
     glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
+    
     //bottom right - Floyd-Steinberg dithering
     glViewport(256, 0, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[1]);
@@ -280,6 +273,7 @@ void lenasWindow(void)
     glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
     glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
+    
     //top right - sobel edge detection
     glViewport(256, 256, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[2]);
@@ -289,6 +283,7 @@ void lenasWindow(void)
     glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
     glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
+    
     //top left - grayscale image
     glViewport(0, 256, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[3]);
