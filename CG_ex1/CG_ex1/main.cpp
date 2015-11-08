@@ -12,17 +12,18 @@
 GLuint texture[4];
 GLuint bitTex;
 GLubyte *pic;
-
 GLint width;
 GLint height;
 GLubyte *data_out;
-GLubyte *floyd_out;     //initialize an output image for the Floyd algorithm
-GLubyte *halfTone_out;  //initialize an output image for the Halftone algorithm
-GLubyte *sobel_out;     //initialize an output image for the Edge Detection algorithm
+GLubyte *floyd_out;             //initialize an output image for the Floyd algorithm
+GLubyte *halfTone_out;          //initialize an output image for the Halftone algorithm
+GLubyte *halfTone_out_scaled;   //initialize an output image for the Scaled down Halftone image
+GLubyte *sobel_out;             //initialize an output image for the Edge Detection algorithm
+
 
 //Floyd Steinberg Dither Algorithm
 void floydSteinberg(){
-    floyd_out = new GLubyte[width*height]();
+    floyd_out = new GLubyte[width*height];
     int x, y, quant_error;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
@@ -38,18 +39,81 @@ void floydSteinberg(){
     }
 }
 
-////HalfTone Algorithm
-//void halfTone(){
-//    halfTone_out = new GLubyte[width*height];
-//    int x, y;
-//    for (x = 0; x < width; x++) {
-//        for (y = 0; y < height; y++) {
-//            GLubyte currPixel = pic[(y*width)+x];
-//            
-//
-//        }
-//    }
-//}
+//HalfTone Algorithm
+void halfTone(){
+    halfTone_out = new GLubyte[width*height*4]();
+    halfTone_out_scaled = new GLubyte[256*256]();
+    int x, y;
+    int i,j;
+    int currPixel;
+    
+    for (i = 0; i < width*2; i++) {
+        for (j = 0; j < height*2; j++) {
+             halfTone_out[(j*width)+i] = 255;
+        }
+    }
+    
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
+            currPixel = data_out[(y*width)+x];
+            
+            if(currPixel >= 0 && currPixel < 51){
+                //top left
+                halfTone_out[(y*width*4)+(x*2)] = 0;
+                //top right
+                halfTone_out[(y*width*4)+(x*2+1)] = 0;
+                //bottom left
+                halfTone_out[((y+1)*width*4)+(x*2+2*width)] = 0;
+                //bottom right
+                halfTone_out[((y+1)*width*4)+(x*2+1)] = 0;
+            }
+            else if (currPixel >= 51 && currPixel < 102){
+                //top left
+                halfTone_out[(y*width*4)+(x*2)] = 0;
+                //top right
+                halfTone_out[(y*width*4)+(x*2+1)] = 0;
+                //bottom left
+                halfTone_out[((y+1)*width*4)+(x*2+2*width)] = 255;
+                //bottom right
+                halfTone_out[((y+1)*width*4)+(x*2+1)] = 0;
+            }
+            else if (currPixel >= 102 && currPixel < 153){
+                //top left
+                halfTone_out[(y*width*4)+(x*2)] = 0;
+                //top right
+                halfTone_out[(y*width*4)+(x*2+1)] = 255;
+                //bottom left
+                halfTone_out[((y+1)*width*4)+(x*2+2*width)] = 255;
+                //bottom right
+                halfTone_out[((y+1)*width*4)+(x*2+1)] = 0;
+            }
+            else if (currPixel >= 153 && currPixel < 204){
+                //top left
+                halfTone_out[(y*width*4)+(x*2)] = 0;
+                //top right
+                halfTone_out[(y*width*4)+(x*2+1)] = 255;
+                //bottom left
+                halfTone_out[((y+1)*width*4)+(x*2+2*width)] = 255;
+                //bottom right
+                halfTone_out[((y+1)*width*4)+(x*2+1)] = 255;
+            }
+            else if (currPixel >= 204 && currPixel < 256){
+                //top left
+                halfTone_out[(y*width*4)+(x*2)] = 255;
+                //top right
+                halfTone_out[(y*width*4)+(x*2+1)] = 255;
+                //bottom left
+                halfTone_out[((y+1)*width*4)+(x*2+2*width)] = 255;
+                //bottom right
+                halfTone_out[((y+1)*width*4)+(x*2+1)] = 255;
+            }
+            else{
+                std::cout<<"Pixel Value Out Of above 255 or below 0"<<std::endl;
+                }
+        }
+    }
+}
+        
 
 //EdgeDetection algorithm
 void edgeDetect(){
@@ -98,7 +162,7 @@ void edgeDetect(){
                 newPixel = sqrt(pow((double)(sumX/8), 2.0) + pow((double)(sumY/8), 2.0));
                 
                 if (newPixel>25)
-                    sobel_out[(row*width + col)]=25;
+                    sobel_out[(row*width + col)]=255;
                 else if (newPixel<0)
                     sobel_out[(row*width + col)]=0;
             }
@@ -120,6 +184,7 @@ void init()
     //f=fopen(filename,"rb");
     //f=fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
     f=fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
+    
     //image header reading
     fread(header,54,1,f);
     if(header[0]!='B' || header[1]!='M')
@@ -149,16 +214,18 @@ void init()
     printf("***** %zu *******\n",rd);
     
     fclose(f);
-    std::cout<< "The Value of this pixel is: "<< pic[0]<<"\n";
+    
     //scale image to 512X512 pixels image
     gluScaleImage(GL_RGB , width, height,GL_UNSIGNED_BYTE, pic, 256, 256,GL_UNSIGNED_BYTE, data_out);
     
     //----------------initialize Filters------------------//
     floydSteinberg();
-    //halfTone();
+    halfTone();
     edgeDetect();
+    //----------------Set Textures------------------------//
+
     
-    //****************Set Textures***********************//
+    //gluScaleImage(GL_RGB , 256*4, 256*4 ,GL_UNSIGNED_BYTE, halfTone_out, 256, 256,GL_UNSIGNED_BYTE, halfTone_out_scaled);
 
     glGenTextures(4, texture);
     
@@ -168,7 +235,7 @@ void init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, halfTone_out);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, halfTone_out_scaled);
     
     //bottom right
     glBindTexture(GL_TEXTURE_2D, texture[1]);
@@ -193,7 +260,7 @@ void init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, pic);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, data_out);
     
 }
 
