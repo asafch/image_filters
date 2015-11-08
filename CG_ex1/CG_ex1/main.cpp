@@ -51,7 +51,7 @@ void init()
     glClearColor(0,0,0,0);
     
     //f=fopen(filename,"rb");
-    f=fopen("./lena256.bmp","rb");
+    f=fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
     
     //image header reading
     fread(header,54,1,f);
