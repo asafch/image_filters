@@ -10,7 +10,7 @@
 #include <GLUT/GLUT.h>
 
 GLuint texture[4];
-GLuint bitTex;
+GLuint bitTex;          // not in use!
 GLubyte *pic;
 GLint width;
 GLint height;
@@ -27,14 +27,14 @@ void floydSteinberg(){
     int x, y, quant_error;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            char oldPixel = data_out[(y*width)+x];
-            char newPixel = (oldPixel / 16)*16;
-            floyd_out[(y*width)+x] = newPixel;
+            char oldPixel = data_out[(y * width) + x];
+            char newPixel = (oldPixel / 16) * 16;
+            floyd_out[(y * width) + x] = newPixel;
             quant_error = oldPixel - newPixel;
-            floyd_out[(y*width)+x+1] = data_out[(y*width)+x+1] + quant_error * (7/16);
-            floyd_out[y*(width+1) + (x+1)] = data_out[y*(width+1) + (x+1)] + quant_error * (3/16);
-            floyd_out[y*(width+1) + x] = data_out[y*(width+1) + x] + quant_error * (5/16);
-            floyd_out[y*(width+1)+(x-1)] = data_out[y*(width+1)+(x-1)] + quant_error * (1/16);
+            floyd_out[(y * width) + x + 1] = data_out[(y * width) + x + 1] + quant_error * (7 / 16);
+            floyd_out[y * (width + 1) + (x + 1)] = data_out[y * (width + 1) + (x + 1)] + quant_error * (3 / 16);
+            floyd_out[y * (width + 1) + x] = data_out[y * (width+1) + x] + quant_error * (5 / 16);
+            floyd_out[y * (width + 1)+ (x - 1)] = data_out[y * (width + 1) + (x - 1)] + quant_error * (1 / 16);
         }
     }
 }
@@ -115,16 +115,18 @@ void halfTone(){
 }
         
 
-//EdgeDetection algorithm
-void edgeDetect(){
-    sobel_out = new GLubyte[width*height];
+//Sobel edge detection algorithm
+void edgeDetect()
+{
+    sobel_out = new GLubyte[width * height];
     int sumX, sumY;
     int newPixel;
-    int i, j;
+    int i;
+    int j;
     int Sx [3][3];
     int Sy [3][3];
-    int col = 0;
-    int row = 0;
+    int col;
+    int row;
     
     // Sobel Mask, Sx
     Sx[0][0]=-1;    Sx[0][1]=0;     Sx[0][2]=1;
@@ -140,18 +142,15 @@ void edgeDetect(){
         for (row = 0; row < height; row++) {
             sumX = 0;
             sumY = 0;
-            
-            if (height==0)
-                newPixel=0;
-            else if (width==0)
-                newPixel=0;
+            if (height == 0)
+                newPixel = 0;
+            else if (width == 0)
+                newPixel = 0;
             else {
                 // Gradient X
-                for(i=-1; i<=1; i++) {
-                    for(j=-1; j<=1; j++) {
-                        sumX += data_out[(row+i)*width + (col+j)]*Sx[i+1][j+1];
-                    }
-                }
+                for (i = -1; i <= 1; i++)
+                    for (j = -1; j <= 1; j++)
+                        sumX += data_out[(row + i) * width + (col + j)] * Sx[i + 1][j + 1];
                 // Gradient Y
                 for(i=-1; i<=1; i++) {
                     for(j=-1; j<=1; j++) {
@@ -175,7 +174,7 @@ void init()
     FILE *f;
     int picSize;
     size_t rd;
-    GLubyte header[54],colorTable[1024];
+    GLubyte header[54], colorTable[1024];
     glEnable(GL_TEXTURE_2D);
     glOrtho(-1.0, 1.0, -1.0 ,1.0,-1.0,1.0); //????
     
@@ -186,38 +185,34 @@ void init()
     f=fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
     
     //image header reading
-    fread(header,54,1,f);
-    if(header[0]!='B' || header[1]!='M')
+    fread(header, 54, 1, f);
+    if (header[0] != 'B' || header[1] != 'M')
         exit(1);  //not a BMP file
-    for(int i=0;i<54;i++)
-        printf("%x  ",header[i]);
-    
-    picSize=(*(int*)(header+2)-54);
-    width=*(int*)(header+18);
-    height=*(int*)(header+22);
-    printf("\nlena %d %d %d %d \n",picSize,width,height,width*height);
+    for (int i = 0; i < 54; i++)
+        printf("%x  ", header[i]);
+    picSize = (*(int*)(header + 2) - 54);
+    width = *(int*)(header + 18);
+    height = *(int*)(header + 22);
+    printf("\nlena %d %d %d %d \n", picSize, width, height, width * height);
     
     /**********************************/
     
-    pic = new GLubyte[width*height];
-    data_out = new GLubyte[width*height];
-    
+    pic = new GLubyte[width * height];
+//    pic = new GLubyte[picSize];
+    data_out = new GLubyte[width * height];
+//    data_out = new GLubyte[256 * 256 * 9 * 3];
     printf("***** color table *******\n");
-    rd=fread(colorTable,1,1024,f); //read color table
-    for(int i=0;i<256*4;i++)
-        if(i%4==1)
-            printf("%x  ",colorTable[i]);
+    rd = fread(colorTable, 1, 1024, f); //read color table
+    for (int i = 0;i < 256 * 4; i++)
+        if (i % 4 == 1)
+            printf("%x  ", colorTable[i]);
     printf("\n");
-    
-    rd=fread(pic,1,width*height,f); //read image
-    
-    printf("***** %zu *******\n",rd);
-    
+    rd = fread(pic, 1, width * height, f); //read image
+    printf("***** %zu *******\n", rd);    //what's this?
     fclose(f);
     
     //scale image to 512X512 pixels image
-    gluScaleImage(GL_RGB , width, height,GL_UNSIGNED_BYTE, pic, 256, 256,GL_UNSIGNED_BYTE, data_out);
-    
+    gluScaleImage(GL_RGB , width, height, GL_UNSIGNED_BYTE, pic, 256, 256, GL_UNSIGNED_BYTE, data_out);
     //----------------initialize Filters------------------//
     floydSteinberg();
     halfTone();
@@ -228,8 +223,7 @@ void init()
     //gluScaleImage(GL_RGB , 256*4, 256*4 ,GL_UNSIGNED_BYTE, halfTone_out, 256, 256,GL_UNSIGNED_BYTE, halfTone_out_scaled);
 
     glGenTextures(4, texture);
-    
-    //bottom left
+    //bottom left - half tone
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -244,16 +238,14 @@ void init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, floyd_out);
-    
-    //top right
+    //top right - Sobel edge detection
     glBindTexture(GL_TEXTURE_2D, texture[2]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,GL_LUMINANCE, GL_UNSIGNED_BYTE, sobel_out);
-    
-    //top left
+    //top left - grayscale
     glBindTexture(GL_TEXTURE_2D, texture[3]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -264,67 +256,64 @@ void init()
     
 }
 
-void mydisplay(void){
+void lenasWindow(void)
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    //bottom left
-    glViewport(0,0,256,256);
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+//    glBindTexture(GL_TEXTURE_2D, texture[1]); //using Lena texture
+//    glViewport(0,0,256*2,256*2);
+    //bottom left - half tone
+    glViewport(0, 0, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0 ,-1.0f,1.0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(1.0 , -1.0f,1.0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(1.0 , 1.0f,1.0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0 , 1.0f,1.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
-    
-    //bottom right
-    glViewport(256,0,256,256);
+    //bottom right - Floyd-Steinberg dithering
+    glViewport(256, 0, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[1]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0 ,-1.0f,1.0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(1.0 , -1.0f,1.0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(1.0 , 1.0f,1.0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0 , 1.0f,1.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
-    
-    
-    //top right
-    glViewport(256,256,256,256);
+    //top right - sobel edge detection
+    glViewport(256, 256, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[2]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0 ,-1.0f,1.0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(1.0 , -1.0f,1.0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(1.0 , 1.0f,1.0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0 , 1.0f,1.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
-    
-    //top left
-    glViewport(0,256,256,256);
+    //top left - grayscale image
+    glViewport(0, 256, 256, 256);
     glBindTexture(GL_TEXTURE_2D, texture[3]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0 ,-1.0f,1.0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(1.0 , -1.0f,1.0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(1.0 , 1.0f,1.0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0 , 1.0f,1.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0f, 1.0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0f, 1.0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0f, 1.0);
     glEnd();
-    
-    
     glFlush();
 }
 
-
-int main(int  argc,  char** argv)
+int main(int argc, char **argv)
 {
     //filename = argv[1];
     glutInit (& argc, argv) ;
     glutInitDisplayMode (GLUT_SINGLE) ;
     glutInitWindowSize (512,512) ;
-    glutCreateWindow("Lena times four") ;
+    glutCreateWindow("Lena Strikes Again!") ;
     init();
-    
-    glutDisplayFunc(mydisplay) ;
-    
+    glutDisplayFunc(lenasWindow) ;
     glutMainLoop () ;
-    
-    delete(pic);
+    delete pic;
+    delete data_out;
+    delete floyd_out;
+    delete halfTone_out;
+    delete sobel_out;
 }
