@@ -61,6 +61,12 @@
             ReferencedContainer = "container:CG_ex1.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

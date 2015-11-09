@@ -9,6 +9,7 @@
 #include <math.h>
 #include <GLUT/GLUT.h>
 
+char *file_name;
 GLuint texture[4];
 GLubyte *pic;
 GLint width;
@@ -16,7 +17,6 @@ GLint height;
 GLubyte *data_out;
 GLubyte *floyd_out;             //initialize an output image for the Floyd algorithm
 GLubyte *halfTone_out;          //initialize an output image for the Halftone algorithm
-GLubyte *halfTone_out_scaled;   //initialize an output image for the Scaled down Halftone image
 GLubyte *sobel_out;             //initialize an output image for the Edge Detection algorithm
 
 //Floyd-Steinberg dithering algorithm
@@ -41,7 +41,6 @@ void floydSteinberg()
 //HalfTone Algorithm
 void halfTone(){
     halfTone_out = new GLubyte[256*256*4];
-    halfTone_out_scaled = new GLubyte[256*256];
     int x, y;
     int i,j;
     int currPixel;
@@ -173,8 +172,8 @@ void init()
     glEnable(GL_TEXTURE_2D);
     glOrtho(-1.0, 1.0, -1.0 ,1.0,-1.0,1.0); //????
     glClearColor(0,0,0,0);
-    //f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp", "rb");
-    f = fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp", "rb");
+    f = fopen(file_name, "rb");
+//    f = fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp", "rb");
     if (f == NULL) {
         exit(1);
     }
@@ -298,23 +297,46 @@ void clearMemory()
     delete data_out;
     delete floyd_out;
     delete halfTone_out;
-    delete halfTone_out_scaled;
     delete sobel_out;
 }
 
-//void print_loop
+void outputImageToTextFiles()
+{
+    FILE *f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/test4.txt", "w+");
+    if (f == NULL)
+        printf("Error: can't open file for writing: test4.txt\n");
+    for (int i = 0; i < 256 * 256; i++)
+        fprintf(f, "%u;", sobel_out[i] / 255);
+    fclose(f);
+    f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/test5.txt", "w+");
+    if (f == NULL)
+        printf("Error: can't open file for writing: test5.txt\n");
+    for (int i = 0; i < 256 * 256 * 4; i++)
+        fprintf(f, "%u;", halfTone_out[i] / 255);
+    fclose(f);
+    f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/test6.txt", "w+");
+    if (f == NULL)
+        printf("Error: can't open file for writing: test6.txt\n");
+    for (int i = 0; i < 256 * 256; i++)
+        fprintf(f, "%u;", floyd_out[i] / 16);
+    fclose(f);
+}
 
 int main(int argc, char **argv)
 {
-    //filename = argv[1];
+    if (argc != 2){
+        printf("Usage: assignment1 <path/to/image>\n");
+        exit(1);
+    }
+    file_name = argv[1];
     glutInit (& argc, argv) ;
     glutInitDisplayMode (GLUT_SINGLE) ;
     glutInitWindowSize (512,512) ;
     glutCreateWindow("Lena Strikes Again!") ;
     init();
+    outputImageToTextFiles();
     glutDisplayFunc(lenasWindow) ;
     glutMainLoop () ;
-   // print_images();
     clearMemory();
     return 0;
 }
