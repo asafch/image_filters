@@ -306,19 +306,19 @@ void outputImageToTextFiles()
     if (f == NULL)
         printf("Error: can't open file for writing: test4.txt\n");
     for (int i = 0; i < 256 * 256; i++)
-        fprintf(f, "%u;", sobel_out[i] / 255);
+        fprintf(f, "%u,", sobel_out[i] / 255);
     fclose(f);
     f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/test5.txt", "w+");
     if (f == NULL)
         printf("Error: can't open file for writing: test5.txt\n");
     for (int i = 0; i < 256 * 256 * 4; i++)
-        fprintf(f, "%u;", halfTone_out[i] / 255);
+        fprintf(f, "%u,", halfTone_out[i] / 255);
     fclose(f);
     f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/test6.txt", "w+");
     if (f == NULL)
         printf("Error: can't open file for writing: test6.txt\n");
     for (int i = 0; i < 256 * 256; i++)
-        fprintf(f, "%u;", floyd_out[i] / 16);
+        fprintf(f, "%u,", floyd_out[i] / 16);
     fclose(f);
 }
 

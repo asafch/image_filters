@@ -10,7 +10,7 @@
 		59D609ED1BEF5D9600D5A5B8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D609EC1BEF5D9600D5A5B8 /* OpenGL.framework */; };
 		59D609EF1BEF5D9D00D5A5B8 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D609EE1BEF5D9D00D5A5B8 /* GLUT.framework */; };
 		59D609F11BEF5DA300D5A5B8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D609F01BEF5DA300D5A5B8 /* Cocoa.framework */; };
-		F02549801BEF5D2100A76600 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F025497F1BEF5D2100A76600 /* main.cpp */; };
+		F02549801BEF5D2100A76600 /* assignment1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F025497F1BEF5D2100A76600 /* assignment1.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,7 +31,7 @@
 		59D609F01BEF5DA300D5A5B8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59D609F21BEF5E8700D5A5B8 /* lena256.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = lena256.bmp; path = CG_ex1/lena256.bmp; sourceTree = "<group>"; };
 		F025497C1BEF5D2100A76600 /* CG_ex1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CG_ex1; sourceTree = BUILT_PRODUCTS_DIR; };
-		F025497F1BEF5D2100A76600 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F025497F1BEF5D2100A76600 /* assignment1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = assignment1.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,7 +71,7 @@
 		F025497E1BEF5D2100A76600 /* CG_ex1 */ = {
 			isa = PBXGroup;
 			children = (
-				F025497F1BEF5D2100A76600 /* main.cpp */,
+				F025497F1BEF5D2100A76600 /* assignment1.cpp */,
 			);
 			path = CG_ex1;
 			sourceTree = "<group>";
@@ -132,7 +132,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F02549801BEF5D2100A76600 /* main.cpp in Sources */,
+				F02549801BEF5D2100A76600 /* assignment1.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
