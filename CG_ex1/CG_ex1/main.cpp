@@ -27,7 +27,7 @@ void floydSteinberg()
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
             char oldPixel = data_out[(y * width) + x];
-            char newPixel = (oldPixel / 16) * 16;
+            char newPixel = (oldPixel / 16) * 16;  //does nothing?
             floyd_out[(y * width) + x] = newPixel;
             quant_error = oldPixel - newPixel;
             floyd_out[(y * width) + x + 1] = data_out[(y * width) + x + 1] + quant_error * (7 / 16);
@@ -169,16 +169,15 @@ void init()
     FILE *f;
     int picSize;
     size_t rd;
-    GLubyte header[54], colorTable[1024];
+    GLubyte header[54], colorTable[1024]; // where is the color table used?
     glEnable(GL_TEXTURE_2D);
     glOrtho(-1.0, 1.0, -1.0 ,1.0,-1.0,1.0); //????
-    
     glClearColor(0,0,0,0);
-    
-    //f=fopen(filename,"rb");
-    //f=fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
-    f=fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp","rb");
-    
+    f = fopen("/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp", "rb");
+//    f = fopen("/Users/bbenchaya/Documents/CG_ex1/CG_ex1/CG_ex1/lena256.bmp", "rb");
+    if (f == NULL) {
+        exit(1);
+    }
     //image header reading
     fread(header, 54, 1, f);
     if (header[0] != 'B' || header[1] != 'M')
@@ -296,6 +295,16 @@ void lenasWindow(void)
     glFlush();
 }
 
+void clearMemory()
+{
+    delete pic;
+    delete data_out;
+    delete floyd_out;
+    delete halfTone_out;
+    delete halfTone_out_scaled;
+    delete sobel_out;
+}
+
 int main(int argc, char **argv)
 {
     //filename = argv[1];
@@ -306,9 +315,6 @@ int main(int argc, char **argv)
     init();
     glutDisplayFunc(lenasWindow) ;
     glutMainLoop () ;
-    delete pic;
-    delete data_out;
-    delete floyd_out;
-    delete halfTone_out;
-    delete sobel_out;
+    clearMemory();
+    return 0;
 }
