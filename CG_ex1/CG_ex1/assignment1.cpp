@@ -59,7 +59,7 @@ void halfTone(){
                 //top left
                 halfTone_out[(y*width*4)+(2*x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y*width*4)+(2*x+1)] = 0;
                 //bottom left
                 halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 0;
                 //bottom right
@@ -69,7 +69,7 @@ void halfTone(){
                 //top left
                 halfTone_out[(y*width*4)+(2*x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y*width*4)+(2*x+1)] = 0;
                 //bottom left
                 halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
@@ -79,7 +79,7 @@ void halfTone(){
                 //top left
                 halfTone_out[(y*width*4)+(2*x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x)] = 255;
+                halfTone_out[(y*width*4)+(2*x+1)] = 255;
                 //bottom left
                 halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
@@ -89,7 +89,7 @@ void halfTone(){
                 //top left
                 halfTone_out[(y*width*4)+(2*x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x)] = 255;
+                halfTone_out[(y*width*4)+(2*x + 1)] = 255;
                 //bottom left
                 halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
@@ -329,14 +329,14 @@ int main(int argc, char **argv)
         exit(1);
     }
     file_name = argv[1];
-    glutInit (& argc, argv) ;
-    glutInitDisplayMode (GLUT_SINGLE) ;
-    glutInitWindowSize (512,512) ;
-    glutCreateWindow("Lena Strikes Again!") ;
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE);
+    glutInitWindowSize(512,512);
+    glutCreateWindow("Lena Strikes Again!");
     init();
     outputImageToTextFiles();
-    glutDisplayFunc(lenasWindow) ;
-    glutMainLoop () ;
+    glutDisplayFunc(lenasWindow);
+    glutMainLoop();
     clearMemory();
     return 0;
 }
