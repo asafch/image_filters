@@ -136,22 +136,20 @@ void edgeDetect()
     int row;
     
     // Sobel Mask, Sx
-    Sx[0][0]=-1;    Sx[0][1]=0;     Sx[0][2]=1;
-    Sx[1][0]=-2;    Sx[1][1]=0;     Sx[1][2]=2;
-    Sx[2][0]=-1;    Sx[2][1]=0;     Sx[2][2]=1;
+    Sx[0][0] = -1;    Sx[0][1] = 0;     Sx[0][2] = 1;
+    Sx[1][0] = -2;    Sx[1][1] = 0;     Sx[1][2] = 2;
+    Sx[2][0] = -1;    Sx[2][1] = 0;     Sx[2][2] = 1;
     
     // Sobel Mask, Sy
-    Sy[0][0]=1;     Sy[0][1]=2;     Sy[0][2]=1;
-    Sy[1][0]=0;     Sy[1][1]=0;     Sy[1][2]=0;
-    Sy[2][0]=-1;    Sy[2][1]=-2;    Sy[2][2]=-1;
+    Sy[0][0] = 1;     Sy[0][1] = 2;     Sy[0][2] = 1;
+    Sy[1][0] = 0;     Sy[1][1] = 0;     Sy[1][2] = 0;
+    Sy[2][0] = -1;    Sy[2][1] = -2;    Sy[2][2] = -1;
     
     for (col = 0; col < width; col++) {
         for (row = 0; row < height; row++) {
             sumX = 0;
             sumY = 0;
-            if (height == 0)
-                newPixel = 0;
-            else if (width == 0)
+            if (row == 0 | row == height - 1| col == 0 | col == width - 1)
                 newPixel = 0;
             else {
                 // Gradient X
