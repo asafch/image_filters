@@ -5,7 +5,7 @@ A `256*256 px` bitmap grayscale image is loaded, and presented in the top-left q
 The image is passed through 3 filters:
  1. A [Sobel edge detection](https://en.wikipedia.org/wiki/Sobel_operator) filter, presented in the top-right quadrant of the window
  2. A [half-toning](https://en.wikipedia.org/wiki/Halftone) filter, presented in the bottom-left quadrant of the window
- 3. A [Floyd-Steinberg](https://en.wikipedia.org/wiki/Floyd–Steinberg_dithering) dithering filter (8-bit grascale 0> 2-bit grayscale), presented in the bottom-right quadrant of the window
+ 3. A [Floyd-Steinberg](https://en.wikipedia.org/wiki/Floyd–Steinberg_dithering) dithering filter (8-bit grascale -> 2-bit grayscale), presented in the bottom-right quadrant of the window
 
 The path to the source image is given as `argv[1]`.
 The pixel values of each respective image are written to respective text files, which paths should be hardwired in the code.
