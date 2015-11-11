@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256.bmp"
+            argument = "/Users/asafchelouche/programming/CG_ex1/CG_ex1/CG_ex1/lena256-2.bmp"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

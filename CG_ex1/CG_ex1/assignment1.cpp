@@ -23,17 +23,26 @@ GLubyte *sobel_out;             //initialize an output image for the Edge Detect
 void floydSteinberg()
 {
     floyd_out = new GLubyte[width * height];
-    int x, y, quant_error;
-    for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
-            int oldPixel = data_out[(y * width) + x];
-            int newPixel = (oldPixel / 16) * 16;  //does nothing?
-            floyd_out[(y * width) + x] = newPixel;
+    int i ,j, quant_error;
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+            int oldPixel = data_out[(i * width) + j];
+            int newPixel = (oldPixel / 16) * 16;
+            floyd_out[(i * width) + j] = newPixel;
             quant_error = oldPixel - newPixel;
-            floyd_out[(y * width) + x + 1] = data_out[(y * width) + x + 1] + quant_error * (7 / 16);
-            floyd_out[y * (width + 1) + (x + 1)] = data_out[y * (width + 1) + (x + 1)] + quant_error * (3 / 16);
-            floyd_out[y * (width + 1) + x] = data_out[y * (width+1) + x] + quant_error * (5 / 16);
-            floyd_out[y * (width + 1)+ (x - 1)] = data_out[y * (width + 1) + (x - 1)] + quant_error * (1 / 16);
+            if (i < height - 1 & j < width - 1) {
+            floyd_out[(i * width) + j + 1] = data_out[(i * width) + j + 1] + quant_error * (7 / 16);
+            floyd_out[i * (width + 1) + (j + 1)] = data_out[i * (width + 1) + (j + 1)] + quant_error * (1 / 16);
+            floyd_out[i * (width + 1) + j] = data_out[i * (width+1) + j] + quant_error * (5 / 16);
+            floyd_out[i * (width + 1)+ (j - 1)] = data_out[i * (width + 1) + (j - 1)] + quant_error * (3 / 16);
+            }
+            else if (i < height - 1) {
+                floyd_out[i * (width + 1) + j] = data_out[i * (width+1) + j] + quant_error * (5 / 16);
+                floyd_out[i * (width + 1)+ (j - 1)] = data_out[i * (width + 1) + (j - 1)] + quant_error * (3 / 16);
+            }
+            else if (j < width - 1) {
+                floyd_out[(i * width) + j + 1] = data_out[(i * width) + j + 1] + quant_error * (7 / 16);
+            }
         }
     }
 }
@@ -81,9 +90,9 @@ void halfTone(){
                 //top right
                 halfTone_out[(y*width*4)+(2*x+1)] = 255;
                 //bottom left
-                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
-                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 0;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 0;
             }
             else if (currPixel >= 153 && currPixel < 202){
                 //top left
@@ -91,9 +100,9 @@ void halfTone(){
                 //top right
                 halfTone_out[(y*width*4)+(2*x + 1)] = 255;
                 //bottom left
-                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
-                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
             }
             else if (currPixel >= 202 && currPixel < 256){
                 //top left
@@ -101,9 +110,9 @@ void halfTone(){
                 //top right
                 halfTone_out[(y*width*4)+(2*x)] = 255;
                 //bottom left
-                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
                 //bottom right
-                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
+//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
             }
             else{
                 std::cout<<"Pixel Value Out Of above 255 or below 0"<<std::endl;
