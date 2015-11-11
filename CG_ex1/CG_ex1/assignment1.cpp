@@ -66,53 +66,53 @@ void halfTone(){
             
             if(currPixel >= 0 && currPixel < 51){
                 //top left
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x+1)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x + 1)] = 0;
                 //bottom left
-                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 0;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2)] = 0;
                 //bottom right
-                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 0;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2 + 1)] = 0;
             }
             else if (currPixel >= 51 && currPixel < 102){
                 //top left
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x+1)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x + 1)] = 0;
                 //bottom left
-                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2)] = 255;
                 //bottom right
-                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 0;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2 + 1)] = 0;
             }
             else if (currPixel >= 102 && currPixel < 153){
                 //top left
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x+1)] = 255;
+                halfTone_out[(y * width * 4) + (2 * x + 1)] = 255;
                 //bottom left
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2)] = 255;
                 //bottom right
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 0;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2 + 1)] = 0;
             }
             else if (currPixel >= 153 && currPixel < 202){
                 //top left
-                halfTone_out[(y*width*4)+(2*x)] = 0;
+                halfTone_out[(y * width * 4) + (2 * x)] = 0;
                 //top right
-                halfTone_out[(y*width*4)+(2*x + 1)] = 255;
+                halfTone_out[(y * width * 4) + (2 * x + 1)] = 255;
                 //bottom left
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2)] = 255;
                 //bottom right
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2 + 1)] = 255;
             }
             else if (currPixel >= 202 && currPixel < 256){
                 //top left
-                halfTone_out[(y*width*4)+(2*x)] = 255;
+                halfTone_out[(y * width * 4) + (2 * x)] = 255;
                 //top right
-                halfTone_out[(y*width*4)+(2*x)] = 255;
+                halfTone_out[(y * width * 4) + (2 * x + 1)] = 255;
                 //bottom left
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2)] = 255;
                 //bottom right
-//                halfTone_out[((y+1)*width*4)+(2*width + x*2 + 1)] = 255;
+                halfTone_out[(y * width * 4) + (2 * width + x * 2 + 1)] = 255;
             }
             else{
                 std::cout<<"Pixel Value Out Of above 255 or below 0"<<std::endl;
