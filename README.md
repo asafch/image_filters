@@ -10,6 +10,9 @@ The image is passed through 3 filters:
 The path to the source image is given as `argv[1]`.
 The pixel values of each respective image are written to respective text files, which paths should be hardwired in the code.
 
+Output example:
+![output](https://github.com/asafch/CG_ex1/blob/master/output_example.png)
+
 ### License
 
 The MIT License (MIT)
